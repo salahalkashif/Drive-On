@@ -25,7 +25,7 @@ public class DriveOn extends JFrame {
         GLCanvas glcanvas;
         Animator animator;
         
-        com.cs304.lab9.DriveOnListener listener = new DriveOnGLEventListener3();
+        DriveOnListener listener = new DriveOnGLEventListener3();
         glcanvas = new GLCanvas();
         glcanvas.addGLEventListener(listener);
         glcanvas.addKeyListener(listener);

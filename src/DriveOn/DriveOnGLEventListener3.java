@@ -15,7 +15,7 @@ import javax.media.opengl.*;
 import java.util.BitSet;
 import javax.media.opengl.glu.GLU;
 
-public class DriveOnGLEventListener3 extends com.cs304.lab9.DriveOnListener {
+public class DriveOnGLEventListener3 extends DriveOnListener {
     String assetsFolderName = "Assets";
     int animationIndex = 0;
     int maxWidth = 100;
