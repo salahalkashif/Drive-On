@@ -22,28 +22,26 @@ public class Accident implements Variables {
     public void collision ( double xCar, double yCar){
         DriveOnGLEventListener3.AccidentSound.loadSound("Bomb.wav");
         if (((yCar == yCarMain + 17) || (yCar == yCarMain + 16)) && ((xCarMain + 7 >= xCar)) && (xCarMain - 8 <= xCar)) {
-            //JOptionPane.showConfirmDialog(null, "HAHAHA YOU LOST\n" + "Start new game?", "Congrats!", JOptionPane.CLOSED_OPTION);
-            System.out.println("done!");
-            isAccident = true;
-            DriveOnGLEventListener3.AccidentSound.playSound();
+            handleAccident();
         } else if ((xCar == xCarMain + 6) && ((yCarMain - 15 <= yCar)) && (yCarMain + 16 >= yCar)) {
-
-            //JOptionPane.showConfirmDialog(null, "HAHAHA YOU LOST\n" + "Start new game?", "Congrats!", JOptionPane.CLOSED_OPTION);
-            System.out.println("done2");
-            isAccident = true;
-            DriveOnGLEventListener3.AccidentSound.playSound();
+            handleAccident();
         } else if ((xCar == xCarMain - 7) && ((yCarMain - 15 <= yCar)) && (yCarMain + 16 >= yCar)) {
-            //JOptionPane.showConfirmDialog(null, "HAHAHA YOU LOST\n" + "Start new game?", "Congrats!", JOptionPane.CLOSED_OPTION);
-
-            System.out.println("done3");
-            isAccident = true;
-            DriveOnGLEventListener3.AccidentSound.playSound();
+            handleAccident();
         } else if ((yCar == yCarMain - 16) && ((xCarMain + 7 >= xCar)) && (xCarMain - 8 <= xCar)) {
-            //JOptionPane.showConfirmDialog(null, "HAHAHA YOU LOST\n" + "Start new game?", "Congrats!", JOptionPane.CLOSED_OPTION);
+            handleAccident();
+        }
+    }
 
-            System.out.println("done4");
-            isAccident = true;
-            DriveOnGLEventListener3.AccidentSound.playSound();
+    private void handleAccident() {
+        isAccident = true;
+        DriveOnGLEventListener3.AccidentSound.playSound();
+        MainMenu.lives--;
+        if (MainMenu.lives <= 0) {
+            MainMenu.Page = 20; // Show the lose screen
+        } else {
+            // Reset car position after a collision
+            xCarMain = 54;
+            yCarMain = 5;
         }
     }
 }

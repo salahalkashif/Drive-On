@@ -7,7 +7,7 @@ import javax.media.opengl.GL;
 public class Score {
     GLUT glut =  new GLUT();
     HighScore highScore = new HighScore();
-    static int score = 0;
+    public static int score = 0;
 
     public void drawScore(GL gl) {
 

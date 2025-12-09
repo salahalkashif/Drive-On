@@ -22,6 +22,12 @@ public class Easy implements KeyListener, Variables {
     HighScore highScore = new HighScore();
 
     public void start(GL gl){
+        if (Score.score >= 20) {
+            MainMenu.Page = 23;
+            // Drawing is now handled by DriveOnGLEventListener3
+            return;
+        }
+
         if (lives.pause) {
             accident.accident(allCars);
             lives.lives(gl, accident, allCars);

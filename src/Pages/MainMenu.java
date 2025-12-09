@@ -18,6 +18,7 @@ public class MainMenu implements Variables {
     static String username2;
     AllCars allCars=new AllCars();
     public static int gameMode = 0; //1 for easy, 2 for hard, 3 for multi
+    public static int lives = 3;
 
     public void DrawMainMenu(GL gl) {
         gl.glEnable(GL.GL_BLEND);
@@ -103,6 +104,7 @@ public class MainMenu implements Variables {
             Score.score = 0;
             Time.scoreString="";
             Page=13;
+            lives = 3;
         }
         if (X>=368&&X<=602&&Y>=653&&Y<=736&&Page==20){
             //main menu button when you lose
@@ -115,6 +117,7 @@ public class MainMenu implements Variables {
             Score.score = 0;
             Time.scoreString="";
             Page=13;
+            lives = 3;
 
         }
         if (X>=368&&X<=602&&Y>=653&&Y<=736&&Page==23){
@@ -128,10 +131,24 @@ public class MainMenu implements Variables {
             Score.score = 0;
             Time.scoreString="";
             Page=13;
+            lives = 3;
 
         }else if ((X >= 298 && X <= 685) && (Y >= 311 && Y <= 420)&& Page==16) {
             play=true;
             gameMode=4;
         }//vs ai
+
+        if (X >= 334 && X <= 635 && Y >= 736 && Y <= 835 && Page == 20) {
+            play = false;
+            gameMode = 0;
+            Accident.xCarMain = 54;
+            Accident.yCarMain = 5;
+            AllCars.reset();
+            Time.time = 0;
+            Score.score = 0;
+            Time.scoreString = "";
+            Page = 13;
+            lives = 3;
+        }
     }
 }

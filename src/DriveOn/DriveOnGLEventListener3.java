@@ -72,7 +72,9 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
         gl.glLoadIdentity();
 
-        if(!menus.play&&!flagPause) {
+        if (MainMenu.Page == 20 || MainMenu.Page == 23) {
+            menus.DrawMainMenu(gl);
+        } else if(!menus.play&&!flagPause) {
             menus.DrawMainMenu(gl);
         }
         else if(!flagPause && MainMenu.gameMode == 1) {

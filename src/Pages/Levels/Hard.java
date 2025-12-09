@@ -24,6 +24,12 @@ public class Hard implements KeyListener, Variables {
     HighScore highScore = new HighScore();
 
     public void start(GL gl){
+        if (Score.score >= 10) {
+            MainMenu.Page = 23;
+            // Drawing is now handled by DriveOnGLEventListener3
+            return;
+        }
+
         if (lives.pause) {
             accident.accident(allCars);
             DangerousCar(allCars);
@@ -38,20 +44,12 @@ public class Hard implements KeyListener, Variables {
             allCars.DrawCarsRandom(gl, score,false);
             time.drawTime(gl, -0.98f, 0.90f);
             score.drawScore(gl);
-        }else if((!(win.equals(Pages.Time.scoreString)))){
+        } else {
             MainMenu.Page=20;
             lost.DrawLost(gl);
             time.drawendTime(gl, -0.1f, 0.18f, Pages.Time.endTime);
             score.drawendScore(gl,-0.2f, -0.01f);
             highScore.drawHighScore(gl, -0.00f, -0.01f);
-            drawusername(gl);
-        }
-        if(win.equals(Time.scoreString) ) {
-            MainMenu.Page=23;
-            lives.pause = false;
-            won.DrawWin(gl);
-            score.drawendScore(gl,-0.15f, -0.01f);
-            highScore.drawHighScore(gl,-0.1f, 0.18f);
             drawusername(gl);
         }
     }
