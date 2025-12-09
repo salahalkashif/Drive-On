@@ -7,121 +7,146 @@ package DriveOn;
  * and open the template in the editor.
  */
 
+import Pages.*;
+import Pages.Levels.Easy;
+import Pages.Levels.Hard;
 import Texture.TextureReader;
 import java.awt.event.*;
 import java.io.IOException;
 import javax.media.opengl.*;
 
-import java.util.BitSet;
 import javax.media.opengl.glu.GLU;
 
-public class DriveOnGLEventListener3 extends com.cs304.lab9.DriveOnListener {
-    String assetsFolderName = "Assets";
-    int animationIndex = 0;
-    int maxWidth = 100;
-    int maxHeight = 100;
-    int x = maxWidth/2, y = maxHeight-10;
-    int xm=maxWidth/2,ym=0;
-    
-    // Download enemy textures from https://craftpix.net/freebies/free-monster-2d-game-items/
-    String textureNames[] = {"Man1.png","Man2.png","Man3.png","Man4.png","Back.png","11.png","Balloon1.png"};
-    TextureReader.Texture texture[] = new TextureReader.Texture[textureNames.length];
-    int textures[] = new int[textureNames.length];
+public class DriveOnGLEventListener3 extends DriveOnListener implements Variables, MouseListener {
+    int y = 100;
 
-    /*
-     5 means gun in array pos
-     x and y coordinate for gun 
-     */
-    public void init(GLAutoDrawable gld) {
+    public static boolean ChangeLane=false;
+    public static boolean ChangeLane1=false;
+    public static int CL=0;
+    public static int CL1=0;
+    MainMenu menus = new MainMenu();
+    Easy easy = new Easy();
+    Hard hard = new Hard();
+    Multi multi = new Multi();
+    Pause pause=new Pause();
+    public static boolean flagPause = false;
+    static SoundPlayer GameSound = new SoundPlayer();
+    public static SoundPlayer AccidentSound  = new SoundPlayer();
+    AI ai = new AI();
 
-        GL gl = gld.getGL();
+
+    @Override
+    public void init(GLAutoDrawable glAutoDrawable) {
+        GL gl = glAutoDrawable.getGL();
         gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);    //This Will Clear The Background Color To Black
-        
-        gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);	
-        gl.glGenTextures(textureNames.length, textures, 0);
-        
-        for(int i = 0; i <   textureNames.length; i++){
-            try {
-                texture[i] = TextureReader.readTexture(assetsFolderName + "//" + textureNames[i] , true);
-                gl.glBindTexture(GL.GL_TEXTURE_2D, textures[i]);
 
+        gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
+        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+        gl.glGenTextures(imgs.length, indexImg, 0);
+        GameSound.loadSound("alex-productions-get-going.wav");
+        GameSound.MainMusic();
+        for(int i = 0; i < imgs.length; i++){
+            try {
+                gameTexture[i] = TextureReader.readTexture(assetsFolderName + "//" + imgs[i] , true);
+                gl.glBindTexture(GL.GL_TEXTURE_2D, indexImg[i]);
 //                mipmapsFromPNG(gl, new GLU(), texture[i]);
                 new GLU().gluBuild2DMipmaps(
-                    GL.GL_TEXTURE_2D,
-                    GL.GL_RGBA, // Internal Texel Format,
-                    texture[i].getWidth(), texture[i].getHeight(),
-                    GL.GL_RGBA, // External format from image,
-                    GL.GL_UNSIGNED_BYTE,
-                    texture[i].getPixels() // Imagedata
-                    );
+                        GL.GL_TEXTURE_2D,
+                        GL.GL_RGBA, // Internal Texel Format,
+                        gameTexture[i].getWidth(), gameTexture[i].getHeight(),
+                        GL.GL_RGBA, // External format from image,
+                        GL.GL_UNSIGNED_BYTE,
+                        gameTexture[i].getPixels() // Imagedata
+                );
             } catch( IOException e ) {
-              System.out.println(e);
-              e.printStackTrace();
+                System.out.println(e);
+                e.printStackTrace();
             }
         }
-    }
-    
-    public void display(GLAutoDrawable gld) {
 
-        GL gl = gld.getGL();
+    }
+
+    @Override
+    public void display(GLAutoDrawable glAutoDrawable) {
+        GL gl = glAutoDrawable.getGL();
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
-        gl.glLoadIdentity(); 
-        
-        DrawBackground(gl);
-//        handleKeyPress();
-        movingHandle();
-        animationIndex = animationIndex % 4;
-        
-        
-//        DrawGraph(gl);
-        gl.glPushMatrix();
-        gl.glRotated(1,0,0,0);
-        DrawSprite(gl, x, y, animationIndex, 1);
-        gl.glRotated(0,0,1,1);
+        gl.glLoadIdentity();
 
-        gl.glPopMatrix();
-
-        DrawMonster(gl,xm,ym,5,1);
+        if(!menus.play&&!flagPause) {
+            menus.DrawMainMenu(gl);
+        }
+        else if(!flagPause && MainMenu.gameMode == 1) {
+            DrawBackground(gl,y-100);
+            DrawBackground(gl,y);
+            DrawBackground(gl,y+100);
+            pause.DrawPauseMenu(gl,86,90);
+            DrawBoard(gl);
+            easy.start(gl);
+            easy.handleKeyPress();
+            if(y>0){
+                y-=2;
+            }else {
+                y=100;
+                y-=2;
+            }
+        }else if(!flagPause && MainMenu.gameMode == 2){
+            DrawBackground(gl,y-100);
+            DrawBackground(gl,y);
+            DrawBackground(gl,y+100);
+            pause.DrawPauseMenu(gl,86,90);
+            DrawBoard(gl);
+            hard.start(gl);
+            hard.handleKeyPress();
+            if(y>0){
+                y-=2;
+            }else {
+                y=100;
+                y-=2;
+            }
+        } else if (!flagPause && MainMenu.gameMode == 3) {
+            DrawBackground(gl,y-100);
+            DrawBackground(gl,y);
+            DrawBackground(gl,y+100);
+            pause.DrawPauseMenu(gl,86,90);
+            DrawBoard(gl);
+            multi.start(gl);
+            multi.handleKeyPress();
+            if(y>0){
+                y-=2;
+            }else {
+                y=100;
+                y-=2;
+            }
+        }else if(!flagPause && MainMenu.gameMode == 4) {
+            DrawBackground(gl, y - 100);
+            DrawBackground(gl, y);
+            DrawBackground(gl, y + 100);
+            pause.DrawPauseMenu(gl, 86, 90);
+            DrawBoard(gl);
+            ai.start(gl);
+            ai.handleKeyPress();
+            if (y > 0) {
+                y -= 2;
+            } else {
+                y = 100;
+                y -= 2;
+            }
+        }
+        if(flagPause){
+            DrawBackground(gl,y-100);
+            DrawBackground(gl,y);
+            DrawBackground(gl,y+100);
+            pause.DrawPause(gl,45,45);
+        }
     }
 
-    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-    }
-
-    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
-    }
-    
-    public void DrawSprite(GL gl,int x, int y, int index, float scale){
+    public void DrawBackground(GL gl,int y ){
         gl.glEnable(GL.GL_BLEND);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[index]);	// Turn Blending On
+        gl.glBindTexture(GL.GL_TEXTURE_2D, indexImg[imgs.length-1]);    // Turn Blending On
 
         gl.glPushMatrix();
-            gl.glTranslated( x/(maxWidth/2.0) - 0.9, y/(maxHeight/2.0) - 0.9, 0);
-            gl.glScaled(0.1*scale, 0.1*scale, 1);
-            //System.out.println(x +" " + y);
-            gl.glBegin(GL.GL_QUADS);
-            // Front Face
-                gl.glTexCoord2f(0.0f, 0.0f);
-                gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-                gl.glTexCoord2f(1.0f, 0.0f);
-                gl.glVertex3f(1.0f, -1.0f, -1.0f);
-                gl.glTexCoord2f(1.0f, 1.0f);
-                gl.glVertex3f(1.0f, 1.0f, -1.0f);
-                gl.glTexCoord2f(0.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-            gl.glEnd();
-        gl.glPopMatrix();
-        
-        gl.glDisable(GL.GL_BLEND);
-    }
-    public void DrawMonster(GL gl,int x, int y, int index, float scale){
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[index]);	// Turn Blending On
+        gl.glTranslated( 0, y/(100/2.0) - 0.9, 0);
 
-        gl.glPushMatrix();
-        gl.glTranslated( x/(maxWidth/2.0) - 0.9, y/(maxHeight/2.0) - 0.9, 0);
-        gl.glScaled(0.1*scale, 0.1*scale, 1);
-        //System.out.println(x +" " + y);
         gl.glBegin(GL.GL_QUADS);
         // Front Face
         gl.glTexCoord2f(0.0f, 0.0f);
@@ -137,81 +162,87 @@ public class DriveOnGLEventListener3 extends com.cs304.lab9.DriveOnListener {
 
         gl.glDisable(GL.GL_BLEND);
     }
-    int r=0;
 
-    public void movingHandle (){
-        if (x > 0) {
-            x--;
-        }
-        if (xm < maxWidth-10) {
-            xm++;
-        }
-        if (xm > 0) {
-            xm--;
-        }
-        if (xm < maxWidth-10) {
-            xm++;
-        }
-
-
-    }
-    
-    public void DrawBackground(GL gl){
-        gl.glEnable(GL.GL_BLEND);	
-        gl.glBindTexture(GL.GL_TEXTURE_2D, textures[4]);	// Turn Blending On
+    public void DrawBoard(GL gl){
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, indexImg[imgs.length-2]);    // Turn Blending On
 
         gl.glPushMatrix();
-            gl.glBegin(GL.GL_QUADS);
-            // Front Face
-                gl.glTexCoord2f(0.0f, 0.0f);
-                gl.glVertex3f(-1.0f, -1.0f, -1.0f);
-                gl.glTexCoord2f(1.0f, 0.0f);
-                gl.glVertex3f(1.0f, -1.0f, -1.0f);
-                gl.glTexCoord2f(1.0f, 1.0f);
-                gl.glVertex3f(1.0f, 1.0f, -1.0f);
-                gl.glTexCoord2f(0.0f, 1.0f);
-                gl.glVertex3f(-1.0f, 1.0f, -1.0f);
-            gl.glEnd();
+
+        // Front Face
+        gl.glTranslated( -0.85f, 0.85, 0);
+        gl.glScaled(0.15, 0.25, 1);
+        gl.glBegin(GL.GL_QUADS);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glVertex3f(1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glVertex3f(1.0f, 1.0f, -1.0f);
+        gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glEnd();
         gl.glPopMatrix();
-        
+
         gl.glDisable(GL.GL_BLEND);
     }
-    
-    /*
-     * KeyListener
-     */    
 
-    public void handleKeyPress() {
 
-        if (isKeyPressed(KeyEvent.VK_SPACE)) {
-            if (x > 0) {
-                x--;
-            }
-            animationIndex++;
-        }
+
+    @Override
+    public void reshape(GLAutoDrawable glAutoDrawable, int i, int i1, int i2, int i3) {
 
     }
 
-    public BitSet keyBits = new BitSet(256);
- 
-    @Override 
-    public void keyPressed(final KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        keyBits.set(keyCode);
-    } 
- 
-    @Override 
-    public void keyReleased(final KeyEvent event) {
-        int keyCode = event.getKeyCode();
-        keyBits.clear(keyCode);
-    } 
- 
-    @Override 
-    public void keyTyped(final KeyEvent event) {
-        // don't care 
-    } 
- 
-    public boolean isKeyPressed(final int keyCode) {
-        return keyBits.get(keyCode);
+    @Override
+    public void displayChanged(GLAutoDrawable glAutoDrawable, boolean b, boolean b1) {
+
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        System.out.println(x+" "+y);
+        menus.positions(x, y);
+    }
+
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }

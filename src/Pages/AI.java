@@ -1,8 +1,7 @@
-package Pages.Levels;
+package Pages;
 
 import DriveOn.*;
 import Pages.*;
-import com.sun.opengl.util.GLUT;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GLEventListener;
@@ -10,63 +9,43 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.BitSet;
 
+public class AI implements KeyListener, Variables {
 
-public class Hard implements KeyListener, Variables {
-    GLUT glut = new GLUT();
-    int random = (int) (Math.random()*10);
     AllCars allCars = new AllCars();
     Accident accident = new Accident();
     Lives lives = new Lives();
     Score score = new Score();
-    Pages.Time time = new Pages.Time();
+    Time time = new Time();
     Lost lost = new Lost();
-    Won won=new Won();
-    HighScore highScore = new HighScore();
+    int random = (int) (Math.random()*10);
+
 
     public void start(GL gl){
         if (lives.pause) {
             accident.accident(allCars);
             DangerousCar(allCars);
             lives.lives(gl, accident, allCars);
-            if (!DriveOnGLEventListener3.ChangeLane) {
-                allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, 0, 1);
-            }
-            if (DriveOnGLEventListener3.ChangeLane)
-            {   allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, DriveOnGLEventListener3.CL, 1);
-                DriveOnGLEventListener3.CL=0;
-            }
-            allCars.DrawCarsRandom(gl, score,false);
+            allCars.DrawMainCars(gl, accident.xCarMain, accident.yCarMain, 0, 1);
+            allCars.DrawCarsRandom(gl, score,true);
             time.drawTime(gl, -0.98f, 0.90f);
+
+
             score.drawScore(gl);
-        }else if((!(win.equals(Pages.Time.scoreString)))){
+        }else{
             MainMenu.Page=20;
             lost.DrawLost(gl);
-            time.drawendTime(gl, -0.1f, 0.18f, Pages.Time.endTime);
+            time.drawendTime(gl, -0.1f, 0.18f, Time.endTime);
             score.drawendScore(gl,-0.2f, -0.01f);
-            highScore.drawHighScore(gl, -0.00f, -0.01f);
-            drawusername(gl);
-        }
-        if(win.equals(Time.scoreString) ) {
-            MainMenu.Page=23;
-            lives.pause = false;
-            won.DrawWin(gl);
-            score.drawendScore(gl,-0.15f, -0.01f);
-            highScore.drawHighScore(gl,-0.1f, 0.18f);
-            drawusername(gl);
         }
     }
     public void handleKeyPress() {
         if (isKeyPressed(KeyEvent.VK_LEFT)) {
-            DriveOnGLEventListener3.ChangeLane=true;
             if (accident.xCarMain > 17) {
-                DriveOnGLEventListener3.CL=2;
                 accident.xCarMain--;
             }
         }
         if (isKeyPressed(KeyEvent.VK_RIGHT)) {
-            DriveOnGLEventListener3.ChangeLane=true;
-            if (accident.xCarMain < 75) {DriveOnGLEventListener3.CL=1;
-
+            if (accident.xCarMain < 75) {
                 accident.xCarMain++;
             }
         }
@@ -92,16 +71,6 @@ public class Hard implements KeyListener, Variables {
     public void keyTyped(KeyEvent e) {
 
     }
-    private void drawusername(GL gl) {
-
-        gl.glRasterPos2f(-0.1f, -0.19f);
-
-
-        String scoreString = "user : " + MainMenu.username;
-        for (char c : scoreString.toCharArray()) {
-            glut.glutBitmapCharacter(GLUT.BITMAP_HELVETICA_18, (char) c);
-        }
-    }
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -109,12 +78,12 @@ public class Hard implements KeyListener, Variables {
         keyBits.set(keyCode);
     }
 
+
     @Override
     public void keyReleased(KeyEvent e) {
         int keyCode = e.getKeyCode();
         keyBits.clear(keyCode);
     }
-
     public void DangerousCar(AllCars allCars) {
         if (allCars.NumberOfCarsRandom > 0) {
             if (allCars.cars[2].isturn && allCars.cars[2].y <= accident.yCarMain + 40&&allCars.cars[2].increase<15) {
@@ -133,7 +102,27 @@ public class Hard implements KeyListener, Variables {
                     random=(int) (Math.random()*10);
                 }
             }
+            System.out.println(allCars.cars[2].isturn);
+            if(allCars.cars[0].isturn && allCars.cars[0].y <= accident.yCarMain + 40&&allCars.cars[0].increase<10){
+                if(accident.xCarMain>allCars.cars[0].x){
+                    allCars.cars[0].x++;
+                    allCars.cars[0].increase++;
+                    System.out.println(allCars.cars[0].increase);
+                }else if(accident.xCarMain<allCars.cars[0].x){
+                    allCars.cars[0].x--;
+                    allCars.cars[0].increase++;
+                }
+                if (allCars.cars[0].x >= 70) {
+                    allCars.cars[0].isturn= false;
+                }if (allCars.cars[0].x <= 18) {
+                    allCars.cars[0].isturn = false;
+                }
+            }
+
         }
     }
 
+
 }
+
+

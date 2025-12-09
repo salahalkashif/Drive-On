@@ -25,18 +25,22 @@ public class DriveOn extends JFrame {
         GLCanvas glcanvas;
         Animator animator;
         
-        com.cs304.lab9.DriveOnListener listener = new DriveOnGLEventListener3();
+        DriveOnGLEventListener3 listener = new DriveOnGLEventListener3();
         glcanvas = new GLCanvas();
         glcanvas.addGLEventListener(listener);
-        glcanvas.addKeyListener(listener);
+        glcanvas.addKeyListener(listener.easy);
+        glcanvas.addKeyListener(listener.hard);
+        glcanvas.addKeyListener(listener.multi);
+        glcanvas.addKeyListener((listener.ai));
+        glcanvas.addMouseListener(listener);
         getContentPane().add(glcanvas, BorderLayout.CENTER);
-        animator = new FPSAnimator(15);
+        animator = new FPSAnimator(24);
         animator.add(glcanvas);
         animator.start();
 
-        setTitle("Anim Test");
+        setTitle("Drive On");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(700, 700);
+        setSize(1000, 1000);
         setLocationRelativeTo(null);
         setVisible(true);
         setFocusable(true);
