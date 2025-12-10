@@ -11,6 +11,8 @@ import Pages.*;
 import Pages.Levels.Easy;
 import Pages.Levels.Hard;
 import Texture.TextureReader;
+import com.sun.opengl.util.GLUT;
+
 import java.awt.event.*;
 import java.io.IOException;
 import javax.media.opengl.*;
@@ -29,6 +31,8 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
     Hard hard = new Hard();
     Multi multi = new Multi();
     Pause pause=new Pause();
+    Score score = new Score();
+    GLUT glut = new GLUT();
     public static boolean flagPause = false;
     static SoundPlayer GameSound = new SoundPlayer();
     public static SoundPlayer AccidentSound  = new SoundPlayer();
@@ -72,8 +76,12 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);       //Clear The Screen And The Depth Buffer
         gl.glLoadIdentity();
 
-        if (MainMenu.Page == 20 || MainMenu.Page == 23) {
-            menus.DrawMainMenu(gl);
+        if (MainMenu.Page == 20) { // Lose screen
+            DrawFullScreenImage(gl, 20); // Draw x.png
+            drawEndGameText(gl);
+        } else if (MainMenu.Page == 23) { // Win screen
+            DrawFullScreenImage(gl, 23); // Draw Document.png
+            drawEndGameText(gl);
         } else if(!menus.play&&!flagPause) {
             menus.DrawMainMenu(gl);
         }
@@ -140,6 +148,40 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
             DrawBackground(gl,y+100);
             pause.DrawPause(gl,45,45);
         }
+    }
+
+    private void drawEndGameText(GL gl) {
+        gl.glColor3f(0.0f, 0.0f, 0.0f); // Set color to black
+
+        // Draw Score
+        gl.glRasterPos2f(-0.016f, -0.1f); // Centered based on your coordinates
+        String scoreString =  "" + score.score;
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, scoreString);
+
+        // Draw Username
+        gl.glRasterPos2f(-0.016f, 0.35f); // Centered based on your coordinates
+        String userString =  MainMenu.username;
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, userString);
+
+        gl.glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white
+    }
+
+    public void DrawFullScreenImage(GL gl, int imageIndex) {
+        gl.glEnable(GL.GL_BLEND);
+        gl.glBindTexture(GL.GL_TEXTURE_2D, indexImg[imageIndex]);
+        gl.glPushMatrix();
+        gl.glBegin(GL.GL_QUADS);
+        gl.glTexCoord2f(0.0f, 0.0f);
+        gl.glVertex3f(-1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 0.0f);
+        gl.glVertex3f(1.0f, -1.0f, -1.0f);
+        gl.glTexCoord2f(1.0f, 1.0f);
+        gl.glVertex3f(1.0f, 1.0f, -1.0f);
+        gl.glTexCoord2f(0.0f, 1.0f);
+        gl.glVertex3f(-1.0f, 1.0f, -1.0f);
+        gl.glEnd();
+        gl.glPopMatrix();
+        gl.glDisable(GL.GL_BLEND);
     }
 
     public void DrawBackground(GL gl,int y ){

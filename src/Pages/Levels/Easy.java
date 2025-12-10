@@ -17,60 +17,36 @@ public class Easy implements KeyListener, Variables {
     Lives lives = new Lives();
     Score score = new Score();
     Pages.Time time = new Pages.Time();
-    Lost lost = new Lost();
-    Won won =new Won();
-    HighScore highScore = new HighScore();
 
     public void start(GL gl){
-        if (Score.score >= 20) {
-            MainMenu.Page = 23;
-            // Drawing is now handled by DriveOnGLEventListener3
-            return;
+        // First, check for win/loss conditions to stop the game.
+        if (Score.score >= 15) {
+            MainMenu.Page = 23; // Set page to "Win" (Document.png)
+            return; // Stop game logic and let the main loop render the win screen.
         }
 
-        if (lives.pause) {
-            accident.accident(allCars);
-            lives.lives(gl, accident, allCars);
-            if (!DriveOnGLEventListener3.ChangeLane) {
-                allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, 0, 1);
-            }
-            if (DriveOnGLEventListener3.ChangeLane)
-            {
-                allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, DriveOnGLEventListener3.CL, 1);
-                DriveOnGLEventListener3.CL=0;
-            }
-            allCars.DrawCarsRandom(gl, score,true);
-            Pages.Time.drawTime(gl, -0.98f, 0.90f);
-            score.drawScore(gl);
+        if (!lives.pause) { // lives.pause becomes false when lives run out.
+            MainMenu.Page = 20; // Set page to "Lose" (x.png)
+            return; // Stop game logic and let the main loop render the lose screen.
+        }
 
-        }else if(!won.equals(Pages.Time.scoreString)){
-            System.out.println(won.equals(Pages.Time.scoreString) + "    " + won + "   " + Pages.Time.scoreString);
-            MainMenu.Page=20;
-            lost.DrawLost(gl);
-            time.drawendTime(gl, -0.1f, 0.18f, Pages.Time.endTime);
-            score.drawendScore(gl,-0.2f, -0.01f);
-            highScore.drawHighScore(gl, -0.00f, -0.01f);
-            drawusername(gl);
+        // If the game is still running, execute the game logic and drawing.
+        accident.accident(allCars);
+        lives.lives(gl, accident, allCars);
+
+        if (!DriveOnGLEventListener3.ChangeLane) {
+            allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, 0, 1);
         }
-        if(won.equals(Time.scoreString)) {
-            lives.pause = false;
-            MainMenu.Page=23;
-            won.DrawWin(gl);
-            score.drawendScore(gl,-0.1f, -0.01f);
-            highScore.drawHighScore(gl,-0.1f, 0.18f);
-            drawusername(gl);
+        if (DriveOnGLEventListener3.ChangeLane)
+        {
+            allCars.DrawMainCars(gl, Accident.xCarMain, Accident.yCarMain, DriveOnGLEventListener3.CL, 1);
+            DriveOnGLEventListener3.CL=0;
         }
+        allCars.DrawCarsRandom(gl, score,true);
+        Pages.Time.drawTime(gl, -0.98f, 0.90f);
+        score.drawScore(gl);
     }
-    private void drawusername(GL gl) {
 
-        gl.glRasterPos2f(-0.1f, -0.19f);
-
-
-        String scoreString = "user : " + MainMenu.username;
-        for (char c : scoreString.toCharArray()) {
-            glut.glutBitmapCharacter(GLUT.BITMAP_HELVETICA_18, (char) c);
-        }
-    }
     public void handleKeyPress() {
         if (isKeyPressed(KeyEvent.VK_LEFT)) {
             DriveOnGLEventListener3.ChangeLane=true;
