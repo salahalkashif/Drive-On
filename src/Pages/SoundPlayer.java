@@ -1,13 +1,15 @@
 package Pages;
 
 import javax.sound.sampled.*;
+import java.io.File;
 
 public class SoundPlayer {
     private Clip clip;
 
     public void loadSound(String filename) {
         try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(getClass().getResource(filename));
+            File soundFile = new File(filename);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
         } catch (Exception e) {
@@ -42,4 +44,3 @@ public class SoundPlayer {
         }
     }
 }
-

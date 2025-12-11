@@ -49,7 +49,7 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
         gl.glEnable(GL.GL_TEXTURE_2D);  // Enable Texture Mapping
         gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         gl.glGenTextures(imgs.length, indexImg, 0);
-        GameSound.loadSound("alex-productions-get-going.wav");
+        GameSound.loadSound(assetsFolderName + "/speed-racing-action-music-115039.wav");
         GameSound.MainMusic();
         for(int i = 0; i < imgs.length; i++){
             try {

@@ -4,7 +4,7 @@ package Pages ;
 
 
 import DriveOn.*;
-
+import java.awt.Polygon;
 import javax.media.opengl.GL;
 import javax.swing.*;
 
@@ -120,22 +120,26 @@ public class MainMenu implements Variables {
             lives = 3;
 
         }
-        if (X>=368&&X<=602&&Y>=653&&Y<=736&&Page==23){
-            //main menu button when you win
-            play=false;
-            gameMode = 0;
-            Accident.xCarMain = 54;
-            Accident.yCarMain = 5;
-            AllCars.reset();
-            Time.time = 0;
-            Score.score = 0;
-            Time.scoreString="";
-            Page=13;
-            lives = 3;
-
-        }else if ((X >= 264 && X <= 728) && (Y >= 174 && Y <= 237)&& Page==16) {
-            play=true;
-            gameMode=4;
+        if (Page == 23) {
+            int[] xPoints = {387, 590, 601, 390};
+            int[] yPoints = {745, 750, 860, 861};
+            Polygon p = new Polygon(xPoints, yPoints, 4);
+            if (p.contains(X, Y)) {
+                //main menu button when you win
+                play = false;
+                gameMode = 0;
+                Accident.xCarMain = 54;
+                Accident.yCarMain = 5;
+                AllCars.reset();
+                Time.time = 0;
+                Score.score = 0;
+                Time.scoreString = "";
+                Page = 13;
+                lives = 3;
+            }
+        } else if ((X >= 264 && X <= 728) && (Y >= 174 && Y <= 237) && Page == 16) {
+            play = true;
+            gameMode = 4;
         }//vs ai
 
         if (X >= 334 && X <= 635 && Y >= 736 && Y <= 835 && Page == 20) {
