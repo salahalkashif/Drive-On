@@ -37,6 +37,8 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
     static SoundPlayer GameSound = new SoundPlayer();
     public static SoundPlayer AccidentSound  = new SoundPlayer();
     AI ai = new AI();
+    
+    // Removed GLU object as a member
 
 
     @Override
@@ -78,10 +80,10 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
 
         if (MainMenu.Page == 20) { // Lose screen
             DrawFullScreenImage(gl, 20); // Draw x.png
-            drawEndGameText(gl);
+            drawEndGameText(gl); // Reverted to original call
         } else if (MainMenu.Page == 23) { // Win screen
             DrawFullScreenImage(gl, 23); // Draw Document.png
-            drawEndGameText(gl);
+            drawEndGameText(gl); // Reverted to original call
         } else if(!menus.play&&!flagPause) {
             menus.DrawMainMenu(gl);
         }
@@ -151,19 +153,24 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
     }
 
     private void drawEndGameText(GL gl) {
+        // Reverted to simpler OpenGL state management for text drawing
         gl.glColor3f(0.0f, 0.0f, 0.0f); // Set color to black
 
-        // Draw Score
-        gl.glRasterPos2f(-0.016f, -0.1f); // Centered based on your coordinates
-        String scoreString =  "" + score.score;
-        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, scoreString);
-
-        // Draw Username
-        gl.glRasterPos2f(-0.016f, 0.35f); // Centered based on your coordinates
+        // Draw Username at converted OpenGL coordinates for (221, 555) on a 1000x1000 screen, then lowered by 2 "degrees" (0.04f)
+        // Original x_gl = -0.558f, Original y_gl = -0.11f
+        // New y_gl = -0.11f - 0.04f = -0.15f
+        gl.glRasterPos2f(-0.558f, -0.15f);
         String userString =  MainMenu.username;
         glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, userString);
 
-        gl.glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white
+        // Draw Score at converted OpenGL coordinates for (713, 579) on a 1000x1000 screen, then raised by 1 "degree" (0.02f)
+        // Original x_gl = 0.426f, Original y_gl = -0.158f
+        // New y_gl = -0.158f + 0.02f = -0.138f
+        gl.glRasterPos2f(0.426f, -0.138f);
+        String scoreString =  "" + score.score;
+        glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_24, scoreString);
+
+        gl.glColor3f(1.0f, 1.0f, 1.0f); // Reset color to white for other drawings
     }
 
     public void DrawFullScreenImage(GL gl, int imageIndex) {
@@ -287,6 +294,7 @@ public class DriveOnGLEventListener3 extends DriveOnListener implements Variable
 
     @Override
     public void keyReleased(KeyEvent e) {
+
 
     }
 }
